@@ -6,10 +6,251 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      UserRole @default(CLIENT)
+  avatar    String?
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  clientProfile       ClientProfile?
+  nutritionistProfile NutritionistProfile?
+  sentMessages        Message[]           @relation("MessageSender")
+  receivedMessages    Message[]           @relation("MessageReceiver")
+  contracts          Contract[]
+  progressRecords    ProgressRecord[]
+
+  @@map("users")
+}
+
+model ClientProfile {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Dados pessoais
+  age           Int?
+  height        Float? // em cm
+  weight        Float? // em kg
+  gender        Gender?
+  activityLevel ActivityLevel?
+  
+  // Objetivos e restrições
+  goal          String?
+  restrictions  String? // alergias, intolerâncias
+  medicalInfo   String? // condições médicas
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("client_profiles")
+}
+
+model NutritionistProfile {
+  id       String @id @default(cuid())
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Dados profissionais
+  crn         String  @unique // Registro profissional
+  specialty   String?
+  experience  Int?    // anos de experiência
+  bio         String?
+  pricePerHour Float?
+  
+  // Disponibilidade
+  isActive    Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  contracts   Contract[]
+  mealPlans   MealPlan[]
+
+  @@map("nutritionist_profiles")
+}
+
+model Contract {
+  id              String @id @default(cuid())
+  clientId        String
+  nutritionistId  String
+  
+  client          User @relation(fields: [clientId], references: [id])
+  nutritionist    NutritionistProfile @relation(fields: [nutritionistId], references: [id])
+  
+  status          ContractStatus @default(ACTIVE)
+  startDate       DateTime @default(now())
+  endDate         DateTime?
+  monthlyPrice    Float
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  mealPlans MealPlan[]
+  
+  @@map("contracts")
+}
+
+model MealPlan {
+  id              String @id @default(cuid())
+  contractId      String
+  nutritionistId  String
+  
+  contract        Contract @relation(fields: [contractId], references: [id])
+  nutritionist    NutritionistProfile @relation(fields: [nutritionistId], references: [id])
+  
+  title           String
+  description     String?
+  startDate       DateTime
+  endDate         DateTime
+  isActive        Boolean @default(true)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  meals Meal[]
+  
+  @@map("meal_plans")
+}
+
+model Meal {
+  id          String @id @default(cuid())
+  mealPlanId  String
+  mealPlan    MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  
+  type        MealType
+  name        String
+  description String?
+  calories    Float?
+  proteins    Float?
+  carbs       Float?
+  fats        Float?
+  
+  // Horário sugerido
+  suggestedTime String? // "08:00", "12:30", etc
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  foods MealFood[]
+  
+  @@map("meals")
+}
+
+model Food {
+  id          String @id @default(cuid())
+  name        String
+  category    String?
+  
+  // Valores nutricionais por 100g
+  calories    Float
+  proteins    Float
+  carbs       Float
+  fats        Float
+  fiber       Float?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relacionamentos
+  mealFoods MealFood[]
+  
+  @@map("foods")
+}
+
+model MealFood {
+  id       String @id @default(cuid())
+  mealId   String
+  foodId   String
+  quantity Float  // em gramas
+  
+  meal     Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food     Food @relation(fields: [foodId], references: [id])
+  
+  @@map("meal_foods")
+}
+
+model ProgressRecord {
+  id        String @id @default(cuid())
+  userId    String
+  user      User   @relation(fields: [userId], references: [id])
+  
+  weight    Float?
+  bodyFat   Float?
+  muscle    Float?
+  notes     String?
+  photos    String[] // URLs das fotos
+  
+  recordDate DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  @@map("progress_records")
+}
+
+model Message {
+  id         String @id @default(cuid())
+  senderId   String
+  receiverId String
+  content    String
+  isRead     Boolean @default(false)
+  
+  sender     User @relation("MessageSender", fields: [senderId], references: [id])
+  receiver   User @relation("MessageReceiver", fields: [receiverId], references: [id])
+  
+  sentAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+// Enums
+enum UserRole {
+  CLIENT
+  NUTRITIONIST
+  ADMIN
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum ActivityLevel {
+  SEDENTARY
+  LIGHT
+  MODERATE
+  ACTIVE
+  VERY_ACTIVE
+}
+
+enum ContractStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  COMPLETED
+}
+
+enum MealType {
+  BREAKFAST
+  MORNING_SNACK
+  LUNCH
+  AFTERNOON_SNACK
+  DINNER
+  EVENING_SNACK
 }

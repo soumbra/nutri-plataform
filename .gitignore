@@ -45,3 +45,5 @@ prisma/migrations/
 Thumbs.db
 
 /generated/prisma
+docker-compose.yml
+postgres_data/
