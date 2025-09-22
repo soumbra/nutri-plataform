@@ -13,15 +13,19 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.16.2",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.1",
-    "npm": "^11.6.0"
+    "npm": "^11.6.0",
+    "prisma": "^6.16.2",
+    "zod": "^4.1.11"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -35,5 +39,8 @@
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }

@@ -5,12 +5,13 @@
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
-    "db:up": "docker compose up -d",
-    "db:down": "docker compose down",
-    "db:migrate": "npx prisma migrate dev",
-    "db:generate": "npx prisma generate",
-    "db:studio": "npx prisma studio",
-    "db:reset": "npx prisma migrate reset"
+    "db:up": "docker-compose up -d",
+    "db:down": "docker-compose down",
+    "db:migrate": "cd server && npx prisma migrate dev",
+    "db:generate": "cd server && npx prisma generate",
+    "db:studio": "cd server && npx prisma studio",
+    "db:reset": "cd server && npx prisma migrate reset",
+    "db:seed": "cd server && npx prisma db seed"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
@@ -21,8 +22,5 @@
     "bcryptjs": "^3.0.2",
     "prisma": "^6.16.2",
     "ts-node": "^10.9.2"
-  },
-  "prisma": {
-    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
   }
 }
