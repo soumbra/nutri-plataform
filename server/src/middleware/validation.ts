@@ -14,6 +14,14 @@ export const registerSchema = z.object({
   phone: z.string().optional()
 })
 
+export const updateNutritionistSchema = z.object({
+  specialty: z.string().optional(),
+  experience: z.number().min(0).max(50).optional(),
+  bio: z.string().max(1000).optional(),
+  pricePerHour: z.number().min(0).max(1000).optional(),
+  isActive: z.boolean().optional()
+})
+
 export const validate = (schema: z.ZodSchema) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
