@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 // Rotas
 import authRoutes from './routes/auth'
 import nutritionistRoutes from './routes/nutritionist'
+import contractRoutes from './routes/contracts'
 
 
 dotenv.config()
@@ -27,6 +28,7 @@ app.get('/api/health', (req, res) => {
 
 app.use('/api/auth', authRoutes)
 app.use('/api/nutritionists', nutritionistRoutes)
+app.use('/api/contracts', contractRoutes)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)

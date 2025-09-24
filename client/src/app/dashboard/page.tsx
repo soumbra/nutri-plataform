@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 export default function DashboardPage() {
   const { user, logout, loading } = useAuth()
@@ -58,7 +59,9 @@ export default function DashboardPage() {
               <p className="text-muted-foreground mb-4">
                 Procure o profissional ideal para seus objetivos
               </p>
-              <Button>Buscar Nutricionistas</Button>
+              <Link href="/nutritionists">
+                <Button>Buscar Nutricionistas</Button>
+              </Link>
             </CardContent>
           </Card>
 
