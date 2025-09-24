@@ -20,7 +20,7 @@ async function main() {
   const hashedPassword = await bcrypt.hash('123456', 10)
 
   // Criar nutricionista
-  const nutritionist = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: 'dra.silva@email.com',
       name: 'Dra. Ana Silva',
@@ -40,8 +40,68 @@ async function main() {
     }
   })
 
+  await prisma.user.create({
+    data: {
+      email: 'dr.carlos@email.com',
+      name: 'Dr. Carlos Mendes',
+      password: hashedPassword,
+      role: 'NUTRITIONIST',
+      phone: '(11) 99999-3333',
+      nutritionistProfile: {
+        create: {
+          crn: 'CRN3-54321',
+          specialty: 'Nutrição Clínica',
+          experience: 12,
+          bio: 'Especialista em nutrição clínica com foco em diabetes e hipertensão. Atendimento humanizado e baseado em evidências.',
+          pricePerHour: 150.0,
+          isActive: true
+        }
+      }
+    }
+  })
+
+  await prisma.user.create({
+    data: {
+      email: 'dra.lucia@email.com',
+      name: 'Dra. Lúcia Santos',
+      password: hashedPassword,
+      role: 'NUTRITIONIST',
+      phone: '(11) 99999-4444',
+      nutritionistProfile: {
+        create: {
+          crn: 'CRN3-67890',
+          specialty: 'Nutrição Materno-Infantil',
+          experience: 6,
+          bio: 'Nutricionista especializada em gestantes, lactantes e nutrição infantil. Acompanhamento completo da família.',
+          pricePerHour: 100.0,
+          isActive: true
+        }
+      }
+    }
+  })
+
+  await prisma.user.create({
+    data: {
+      email: 'dr.pedro@email.com',
+      name: 'Dr. Pedro Lima',
+      password: hashedPassword,
+      role: 'NUTRITIONIST',
+      phone: '(11) 99999-5555',
+      nutritionistProfile: {
+        create: {
+          crn: 'CRN3-11111',
+          specialty: 'Nutrição Funcional',
+          experience: 4,
+          bio: 'Abordagem integrativa com foco em nutrição funcional e fitoterapia. Tratamento personalizado.',
+          pricePerHour: 180.0,
+          isActive: true
+        }
+      }
+    }
+  })
+
   // Criar cliente
-  const client = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: 'joao@email.com',
       name: 'João Santos',
@@ -62,8 +122,29 @@ async function main() {
     }
   })
 
+  await prisma.user.create({
+    data: {
+      email: 'maria@email.com',
+      name: 'Maria Silva',
+      password: hashedPassword,
+      role: 'CLIENT',
+      phone: '(11) 99999-6666',
+      clientProfile: {
+        create: {
+          age: 35,
+          height: 165.0,
+          weight: 70.0,
+          gender: 'FEMALE',
+          activityLevel: 'LIGHT',
+          goal: 'Melhorar alimentação após gravidez',
+          restrictions: 'Vegetariana'
+        }
+      }
+    }
+  })
+
   // Criar alguns alimentos básicos
-  const foods = await prisma.food.createMany({
+  await prisma.food.createMany({
     data: [
       {
         name: 'Peito de Frango Grelhado',
@@ -116,6 +197,15 @@ async function main() {
   console.log('✅ Seed executado com sucesso!')
   console.log('👨‍⚕️ Nutricionista: dra.silva@email.com / 123456')
   console.log('👤 Cliente: joao@email.com / 123456')
+  console.log('✅ Seed executado com sucesso!')
+  console.log('👨‍⚕️ Nutricionistas:')
+  console.log('  - dra.silva@email.com / 123456 (Nutrição Esportiva)')
+  console.log('  - dr.carlos@email.com / 123456 (Nutrição Clínica)')
+  console.log('  - dra.lucia@email.com / 123456 (Materno-Infantil)')
+  console.log('  - dr.pedro@email.com / 123456 (Nutrição Funcional)')
+  console.log('👤 Clientes:')
+  console.log('  - joao@email.com / 123456')
+  console.log('  - maria@email.com / 123456')
 }
 
 main()
