@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 export default function NutritionistsPage() {
@@ -14,6 +16,8 @@ export default function NutritionistsPage() {
   const [appliedFilters, setAppliedFilters] = useState<NutritionistFilters>({})
   const [formFilters, setFormFilters] = useState<NutritionistFilters>({})
   const [specialties, setSpecialties] = useState<string[]>([])
+
+  const router = useRouter()
 
   const loadNutritionists = useCallback(async () => {
     try {
@@ -62,6 +66,15 @@ export default function NutritionistsPage() {
   return (
     <div className="container mx-auto p-8">
       <div className="mb-8">
+        <Button 
+          variant="ghost" 
+          onClick={() => router.back()}
+          className="mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Voltar
+        </Button>
+
         <h1 className="text-3xl font-bold mb-4">Encontre seu Nutricionista</h1>
         
         {/* Filtros */}

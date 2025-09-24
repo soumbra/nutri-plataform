@@ -7,10 +7,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Phone, Mail, Star } from 'lucide-react'
+import ContractModal from '@/components/ContractModal'
 
 export default function NutritionistProfilePage() {
   const [nutritionist, setNutritionist] = useState<Nutritionist | null>(null)
   const [loading, setLoading] = useState(true)
+  const [contractModalOpen, setContractModalOpen] = useState(false)
   const params = useParams()
   const router = useRouter()
   const id = params.id as string
@@ -141,10 +143,13 @@ export default function NutritionistProfilePage() {
                 <p className="text-3xl font-bold text-primary mb-1">
                   R$ {nutritionist.pricePerHour || 0}
                 </p>
-                <p className="text-muted-foreground">por consulta</p>
+                <p className="text-muted-foreground">por sessão</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  R$ {((nutritionist.pricePerHour || 0) * 4).toFixed(2)}/mês (4 sessões)
+                </p>
               </div>
               
-              <Button className="w-full mb-3" size="lg">
+              <Button className="w-full mb-3" size="lg" onClick={() => setContractModalOpen(true)}>
                 Contratar Nutricionista
               </Button>
               
@@ -193,6 +198,15 @@ export default function NutritionistProfilePage() {
           </Card>
         </div>
       </div>
+
+      {/* Modal de Contratação */}
+      {nutritionist && (
+        <ContractModal
+          nutritionist={nutritionist}
+          open={contractModalOpen}
+          onOpenChange={setContractModalOpen}
+        />
+      )}
     </div>
   )
 }

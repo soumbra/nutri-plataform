@@ -26,6 +26,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   // Inicializar autenticação
   useEffect(() => {
     const initAuth = async () => {
+      // Verificar localStorage primeiro
       const token = localStorage.getItem('token')
       const savedUser = localStorage.getItem('user')
 
@@ -35,6 +36,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } catch (err: unknown) {
           console.error('Erro ao carregar usuário:', err)
           logout()
+        }
+      } else {
+        // Se não tem no localStorage, verificar se tem cookie (caso de refresh)
+        const cookieToken = document.cookie
+          .split('; ')
+          .find(row => row.startsWith('token='))
+          ?.split('=')[1]
+        
+        if (cookieToken && !token) {
+          // Token existe no cookie mas não no localStorage - limpar cookie órfão
+          document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
         }
       }
       setLoading(false)
@@ -48,8 +60,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await api.post<AuthResponse>('/auth/login', data)
       const { token, user: userData } = response.data.data
 
+      // Salvar no localStorage E no cookie
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(userData))
+      
+      // Salvar token no cookie com configurações de segurança
+      // Nota: Idealmente seria HttpOnly definido pelo servidor, mas para compatibilidade com middleware
+      const isProduction = process.env.NODE_ENV === 'production'
+      const secureFlag = isProduction ? '; Secure' : ''
+      document.cookie = `token=${token}; path=/; max-age=86400; SameSite=strict${secureFlag}`
+      
       setUser(userData)
     } catch (err: unknown) {
       const message =
@@ -65,8 +85,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const response = await api.post<AuthResponse>('/auth/register', data)
       const { token, user: userData } = response.data.data
 
+      // Salvar no localStorage E no cookie
       localStorage.setItem('token', token)
       localStorage.setItem('user', JSON.stringify(userData))
+      
+      // Salvar token no cookie com configurações de segurança
+      const isProduction = process.env.NODE_ENV === 'production'
+      const secureFlag = isProduction ? '; Secure' : ''
+      document.cookie = `token=${token}; path=/; max-age=86400; SameSite=strict${secureFlag}`
+      
       setUser(userData)
     } catch (err: unknown) {
       // Tipando corretamente
@@ -79,8 +106,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   const logout = () => {
+    // Limpar localStorage E cookies
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    
+    // Limpar cookie
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    
     setUser(null)
   }
 
