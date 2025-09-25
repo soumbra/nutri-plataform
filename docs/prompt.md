@@ -111,8 +111,5 @@ nutri-platform/
 - Cliente: joao@email.com / 123456
 - Alimentos básicos cadastrados no seed
 
-## Próxima Tarefa Imediata
-Vou implementar a listagem de nutricionistas no frontend e as APIs correspondentes no backend. Preciso criar uma experiência completa de busca e visualização de perfis profissionais.
-
 ## Context para GitHub Copilot
 Me ajude a gerar código que segue os padrões estabelecidos, mantém a consistência com a arquitetura atual, e implementa as funcionalidades do roadmap. Foque em código limpo, typesafe, e bem estruturado seguindo as convenções já definidas no projeto.
