@@ -102,7 +102,7 @@ export class MealPlanController {
   // Criar novo plano alimentar
   static async create(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -110,21 +110,21 @@ export class MealPlanController {
         })
       }
 
-      const data: CreateMealPlanData = this.convertDates(req.body)
+      const data: CreateMealPlanData = MealPlanController.convertDates(req.body)
       const limits: NutritionalLimits | undefined = req.body.limits
 
       const result = await MealPlanService.create(data, user!.userId, user!.role, limits)
       
-      return this.sendSuccessResponse(res, result, 201)
+      return MealPlanController.sendSuccessResponse(res, result, 201)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Listar planos alimentares com filtros e paginação
   static async getAll(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -132,21 +132,21 @@ export class MealPlanController {
         })
       }
 
-      const filters = this.parseMealPlanFilters(req.query)
-      const pagination = this.parsePagination(req.query)
+      const filters = MealPlanController.parseMealPlanFilters(req.query)
+      const pagination = MealPlanController.parsePagination(req.query)
 
       const result = await MealPlanService.getAll(user!.userId, user!.role, filters, pagination)
       
-      return this.sendCustomSuccessResponse(res, result)
+      return MealPlanController.sendCustomSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Buscar plano alimentar por ID
   static async getById(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -157,16 +157,16 @@ export class MealPlanController {
       const { id } = req.params
       const result = await MealPlanService.getById(id, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result)
+      return MealPlanController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Atualizar plano alimentar
   static async update(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -175,20 +175,20 @@ export class MealPlanController {
       }
 
       const { id } = req.params
-      const data = this.convertDates(req.body)
+      const data = MealPlanController.convertDates(req.body)
 
       const result = await MealPlanService.update(id, data, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result)
+      return MealPlanController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Deletar plano alimentar
   static async delete(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -204,14 +204,14 @@ export class MealPlanController {
         message: 'Plano alimentar deletado com sucesso'
       })
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Adicionar refeição ao plano
   static async addMeal(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -224,16 +224,16 @@ export class MealPlanController {
 
       const result = await MealPlanService.addMeal(data, user!.userId, user!.role, limits)
       
-      return this.sendSuccessResponse(res, result, 201)
+      return MealPlanController.sendSuccessResponse(res, result, 201)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Copiar plano alimentar
   static async copyPlan(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -241,20 +241,20 @@ export class MealPlanController {
         })
       }
 
-      const options: CopyPlanOptions = this.convertDates(req.body)
+      const options: CopyPlanOptions = MealPlanController.convertDates(req.body)
 
       const result = await MealPlanService.copyPlan(options, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result, 201)
+      return MealPlanController.sendSuccessResponse(res, result, 201)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Recalcular nutrição do plano
   static async recalculateNutrition(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -265,16 +265,16 @@ export class MealPlanController {
       const { id } = req.params
       const result = await MealPlanService.recalculatePlanNutrition(id, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result)
+      return MealPlanController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 
   // Obter estatísticas do plano
   static async getStatistics(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = MealPlanController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -285,9 +285,9 @@ export class MealPlanController {
       const { id } = req.params
       const result = await MealPlanService.getPlanStatistics(id, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result)
+      return MealPlanController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return MealPlanController.handleError(res, error)
     }
   }
 }

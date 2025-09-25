@@ -111,14 +111,14 @@ export class FoodController {
   // Listar alimentos com filtros e paginação
   static async getAll(req: Request, res: Response) {
     try {
-      const filters = this.parseFoodFilters(req.query)
-      const pagination = this.parsePagination(req.query)
+      const filters = FoodController.parseFoodFilters(req.query)
+      const pagination = FoodController.parsePagination(req.query)
 
       const result = await FoodService.getAll(filters, pagination)
       
-      return this.sendCustomSuccessResponse(res, result)
+      return FoodController.sendCustomSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
@@ -128,16 +128,16 @@ export class FoodController {
       const { id } = req.params
       const result = await FoodService.getById(id)
       
-      return this.sendSuccessResponse(res, result)
+      return FoodController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
   // Criar alimento personalizado (apenas nutricionistas)
   static async create(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = FoodController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -148,16 +148,16 @@ export class FoodController {
       const data: CreateFoodData = req.body
       const result = await FoodService.create(data, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result, 201)
+      return FoodController.sendSuccessResponse(res, result, 201)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
   // Atualizar alimento (apenas nutricionistas)
   static async update(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = FoodController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -169,16 +169,16 @@ export class FoodController {
       const data: UpdateFoodData = req.body
       const result = await FoodService.update(id, data, user!.userId, user!.role)
       
-      return this.sendSuccessResponse(res, result)
+      return FoodController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
   // Deletar alimento (apenas nutricionistas)
   static async delete(req: AuthRequest, res: Response) {
     try {
-      const { isValid, user } = this.validateAuth(req)
+      const { isValid, user } = FoodController.validateAuth(req)
       if (!isValid) {
         return res.status(401).json({
           success: false,
@@ -194,7 +194,7 @@ export class FoodController {
         message: 'Alimento deletado com sucesso'
       })
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
@@ -203,9 +203,9 @@ export class FoodController {
     try {
       const result = await FoodService.getCategories()
       
-      return this.sendSuccessResponse(res, result)
+      return FoodController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
@@ -215,23 +215,23 @@ export class FoodController {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 20
       const result = await FoodService.getPopular(limit)
       
-      return this.sendSuccessResponse(res, result)
+      return FoodController.sendSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 
   // Buscar por perfil nutricional
   static async searchByNutrition(req: Request, res: Response) {
     try {
-      const search = this.parseNutritionalSearch(req.query)
-      const pagination = this.parsePagination(req.query)
+      const search = FoodController.parseNutritionalSearch(req.query)
+      const pagination = FoodController.parsePagination(req.query)
 
       const result = await FoodService.searchByNutrition(search, pagination)
       
-      return this.sendCustomSuccessResponse(res, result)
+      return FoodController.sendCustomSuccessResponse(res, result)
     } catch (error) {
-      return this.handleError(res, error)
+      return FoodController.handleError(res, error)
     }
   }
 }
