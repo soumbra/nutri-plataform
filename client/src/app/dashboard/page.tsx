@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import ClientContracts from '@/components/ClientContracts'
 
 export default function DashboardPage() {
   const { user, logout, loading } = useAuth()
@@ -51,6 +52,9 @@ export default function DashboardPage() {
 
       {user.role === 'CLIENT' ? (
         <div className="grid gap-6">
+          {/* Contratos Ativos */}
+          <ClientContracts />
+          
           <Card>
             <CardHeader>
               <CardTitle>Encontrar Nutricionista</CardTitle>

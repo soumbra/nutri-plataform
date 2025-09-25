@@ -215,4 +215,42 @@ export class ContractController {
       })
     }
   }
+
+  // ⚠️ APENAS PARA DESENVOLVIMENTO - Remover em produção
+  static async delete(req: AuthRequest, res: Response) {
+    try {
+      if (!req.user) {
+        return res.status(401).json({
+          success: false,
+          error: 'Usuário não autenticado'
+        })
+      }
+
+      const { id } = req.params
+      
+      // Verificar se o contrato existe e se o usuário tem permissão
+      const contract = await ContractService.getById(id)
+      
+      if (contract.clientId !== req.user.userId && contract.nutritionistId !== req.user.userId) {
+        return res.status(403).json({
+          success: false,
+          error: 'Sem permissão para excluir este contrato'
+        })
+      }
+
+      await ContractService.delete(id)
+
+      res.json({
+        success: true,
+        data: null,
+        message: 'Contrato excluído com sucesso'
+      })
+    } catch (error) {
+      console.error('Erro ao excluir contrato:', error)
+      res.status(400).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Erro interno do servidor'
+      })
+    }
+  }
 }

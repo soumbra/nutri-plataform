@@ -19,4 +19,8 @@ router.get('/:id', ContractController.getById)
 // PATCH /api/contracts/:id/status - Atualizar status do contrato
 router.patch('/:id/status', ContractController.updateStatus)
 
+// ⚠️ APENAS PARA DESENVOLVIMENTO - Remover em produção
+// DELETE /api/contracts/:id - Excluir contrato
+router.delete('/:id', ContractController.delete)
+
 export default router

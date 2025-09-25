@@ -245,4 +245,19 @@ export class ContractService {
 
     return this.getAll(where)
   }
+
+  // ⚠️ APENAS PARA DESENVOLVIMENTO - Remover em produção
+  static async delete(id: string): Promise<void> {
+    const contract = await prisma.contract.findUnique({
+      where: { id }
+    })
+
+    if (!contract) {
+      throw new Error('Contrato não encontrado')
+    }
+
+    await prisma.contract.delete({
+      where: { id }
+    })
+  }
 }

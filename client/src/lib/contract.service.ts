@@ -98,7 +98,23 @@ export class ContractService {
       if (isApiError(error) && error.response?.data?.error) {
         throw new Error(error.response.data.error)
       }
-      throw new Error('Erro ao atualizar contrato')
+      throw new Error('Erro ao atualizar status do contrato')
+    }
+  }
+
+  // ⚠️ APENAS PARA DESENVOLVIMENTO - Remover em produção
+  static async delete(id: string): Promise<void> {
+    try {
+      const response = await api.delete<ApiResponse<null>>(`/contracts/${id}`)
+
+      if (!response.data.success) {
+        throw new Error(response.data.error || 'Erro ao excluir contrato')
+      }
+    } catch (error: unknown) {
+      if (isApiError(error) && error.response?.data?.error) {
+        throw new Error(error.response.data.error)
+      }
+      throw new Error('Erro ao excluir contrato')
     }
   }
 
