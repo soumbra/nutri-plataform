@@ -96,6 +96,24 @@ nutri-platform/
 - Testes, correções, melhorias de UX
 - Deploy em produção
 - Documentação final
+- Features Avançadas dos Planos
+- UI/UX Avançada:
+    ⏳ Editor visual drag-and-drop para montagem de refeições
+    ⏳ Templates pré-definidos ("Ganho de Massa", "Perda de Peso", "Low Carb")
+    ⏳ PDF export dos planos para impressão
+    ⏳ Interface de substituição de alimentos
+    ⏳ Biblioteca de receitas favoritas
+Features Premium:
+    ⏳ Notificações de horário das refeições
+    ⏳ Analytics avançadas (adesão, progresso nutricional)
+    ⏳ Lista de compras automática
+    ⏳ Cálculos precisos por perfil do cliente
+    ⏳ Histórico de planos com comparações
+Integrações:
+    ⏳ Chat integrado nos planos
+    ⏳ Upload de fotos das refeições
+    ⏳ Feedback do cliente sobre os planos
+    ⏳ Ajustes automáticos baseados no progresso
 
 ## Convenções de Código Atuais
 - **Git:** Conventional Commits (feat:, fix:, docs:)
