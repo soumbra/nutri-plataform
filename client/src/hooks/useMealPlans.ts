@@ -14,6 +14,7 @@ import type {
 } from '@/services/meal-plan.service'
 import type { PaginationResult } from '@/services/base.service'
 import { useCrudStates } from './useBaseHook'
+import { useAuth } from '@/contexts/AuthContext'
 
 // Types específicos do hook
 export interface UseMealPlansOptions {
@@ -63,6 +64,7 @@ export interface UseMealPlansReturn {
 
 export function useMealPlans(options: UseMealPlansOptions = {}): UseMealPlansReturn {
   const { initialFilters = {}, autoFetch = true } = options
+  const { user } = useAuth()
 
   // Estados principais
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([])
@@ -124,14 +126,17 @@ export function useMealPlans(options: UseMealPlansOptions = {}): UseMealPlansRet
   // Buscar planos com filtros
   const fetchPlans = useCallback(async (filters: MealPlanFilters = {}): Promise<void> => {
     await executeFetch(async () => {
-      const result: PaginationResult<MealPlan> = await MealPlanService.getAll({
-        ...filters
-      })
+      // Se o usuário é um nutricionista, filtrar apenas seus planos
+      const enhancedFilters = user?.role === 'NUTRITIONIST' && user.nutritionistProfile?.id 
+        ? { ...filters, nutritionistId: user.nutritionistProfile.id }
+        : filters
+        
+      const result: PaginationResult<MealPlan> = await MealPlanService.getAll(enhancedFilters)
       setMealPlans(result.data)
       setPagination(result.pagination)
       return result
     })
-  }, [executeFetch])
+  }, [executeFetch, user])
 
   // Buscar plano específico por ID
   const fetchPlanById = useCallback(async (id: string): Promise<void> => {

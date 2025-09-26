@@ -90,6 +90,7 @@ export interface MealPlanFilters {
   isActive?: boolean
   contractId?: string
   clientId?: string
+  nutritionistId?: string
   startDate?: string
   endDate?: string
   skip?: number
