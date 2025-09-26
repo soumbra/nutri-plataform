@@ -96,6 +96,9 @@ nutri-platform/
 - Testes, correções, melhorias de UX
 - Deploy em produção
 - Documentação final
+    -API
+    -FRONT
+    -README
 - Features Avançadas dos Planos
 - UI/UX Avançada:
     ⏳ Editor visual drag-and-drop para montagem de refeições

@@ -44,6 +44,7 @@ export interface ContractFilters {
   status?: ContractStatus
   clientId?: string
   nutritionistId?: string
+  [key: string]: unknown
 }
 
 export interface UpdateContractStatusData {

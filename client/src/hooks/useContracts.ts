@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
-import { ContractService } from '@/lib/contract.service'
 import { Contract } from '@/types/contract'
+import { ContractService } from '@/services/contract.service'
 
 interface UseContractsReturn {
   contracts: Contract[]

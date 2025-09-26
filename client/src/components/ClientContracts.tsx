@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar, User, DollarSign, Clock, Trash2 } from 'lucide-react'
 import { Contract } from '@/types/contract'
 import { useContracts } from '@/hooks/useContracts'
-import { ContractService } from '@/lib/contract.service'
+import { ContractService } from '@/services/contract.service'
 import Link from 'next/link'
 
 const statusMap = {
