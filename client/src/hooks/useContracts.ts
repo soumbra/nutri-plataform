@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Contract } from '@/types/contract'
 import { ContractService } from '@/services/contract.service'
+import { useCrudStates } from './useBaseHook'
 
 interface UseContractsReturn {
   contracts: Contract[]
@@ -12,22 +13,22 @@ interface UseContractsReturn {
 
 export function useContracts(): UseContractsReturn {
   const [contracts, setContracts] = useState<Contract[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  
+  // Usando BaseHook para gerenciar estados
+  const { loadingStates, errorStates, executeFetch } = useCrudStates()
 
-  const fetchContracts = useCallback(async () => {
-    try {
-      setLoading(true)
-      setError(null)
+  const fetchContracts = useCallback(async (): Promise<void> => {
+    await executeFetch(async () => {
       const data = await ContractService.getAll()
       setContracts(data)
-    } catch (err) {
-      console.error('Erro ao carregar contratos:', err)
-      setError('Erro ao carregar contratos')
-    } finally {
-      setLoading(false)
-    }
-  }, [])
+      return data
+    })
+  }, [executeFetch])
+
+  // Criar uma versão estável da função refetch
+  const refetch = useCallback(async (): Promise<void> => {
+    await fetchContracts()
+  }, [fetchContracts])
 
   useEffect(() => {
     fetchContracts()
@@ -35,8 +36,8 @@ export function useContracts(): UseContractsReturn {
 
   return {
     contracts,
-    loading,
-    error,
-    refetch: fetchContracts
+    loading: loadingStates.loading,
+    error: errorStates.error,
+    refetch
   }
 }
