@@ -99,9 +99,12 @@ export default function DashboardPage() {
               <CardTitle>Planos Alimentares</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Crie e edite planos personalizados
               </p>
+              <Link href="/dashboard/nutritionist/meal-plans">
+                <Button>Gerenciar Planos</Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

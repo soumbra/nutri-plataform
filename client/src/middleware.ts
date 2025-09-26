@@ -53,12 +53,10 @@ function getRouteType(pathname: string): 'auth' | 'nutritionist' | 'client' | 'a
 // Helper para determinar redirecionamento por role
 function getRedirectByRole(role: string): string {
   switch (role) {
-    case 'CLIENT':
-      return '/dashboard/client'
     case 'NUTRITIONIST':
       return '/dashboard/nutritionist'
+    case 'CLIENT':
     case 'ADMIN':
-      return '/dashboard/admin'
     default:
       return '/dashboard'
   }

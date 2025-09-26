@@ -99,7 +99,6 @@ export function useFoods(options: UseFoodsOptions = {}): UseFoodsReturn {
 
   // Estados específicos não cobertos pelo BaseHook
   const loadingCategories = false
-  const loadingPopular = false  
   const searching = false
 
   // Using BaseHook para gerenciar estados padrão
@@ -352,7 +351,7 @@ export function useFoods(options: UseFoodsOptions = {}): UseFoodsReturn {
     updating: loadingStates.updating,
     deleting: loadingStates.deleting,
     loadingCategories,
-    loadingPopular,
+    loadingPopular: loadingStates.loading,
     searching,
 
     // Estados de error (do BaseHook)

@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { MealPlanService, CreateMealPlanData, CreateMealData, MealPlanFilters, PaginationOptions, NutritionalLimits, CopyPlanOptions } from '../services/meal-plan.service'
+import { MealPlanService, CreateMealPlanData, CreateMealData, UpdateMealData, MealPlanFilters, PaginationOptions, NutritionalLimits, CopyPlanOptions } from '../services/meal-plan.service'
 import { AuthRequest } from '../types'
 
 // Constantes para mensagens de erro
@@ -23,10 +23,14 @@ export class MealPlanController {
     const converted = { ...data }
     
     if (converted.startDate && typeof converted.startDate === 'string') {
-      converted.startDate = new Date(converted.startDate)
+      // Parse como data local para evitar problemas de timezone
+      const parts = converted.startDate.split('-')
+      converted.startDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
     }
     if (converted.endDate && typeof converted.endDate === 'string') {
-      converted.endDate = new Date(converted.endDate)
+      // Parse como data local para evitar problemas de timezone
+      const parts = converted.endDate.split('-')
+      converted.endDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
     }
     
     return converted
@@ -34,12 +38,17 @@ export class MealPlanController {
 
   // Método auxiliar para parsing de filtros de meal plan
   private static parseMealPlanFilters(query: any): MealPlanFilters {
+    const parseLocalDate = (dateString: string): Date => {
+      const parts = dateString.split('-')
+      return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
+    }
+
     return {
       isActive: query.isActive ? query.isActive === 'true' : undefined,
       contractId: query.contractId as string,
       clientId: query.clientId as string,
-      startDate: query.startDate ? new Date(query.startDate as string) : undefined,
-      endDate: query.endDate ? new Date(query.endDate as string) : undefined
+      startDate: query.startDate ? parseLocalDate(query.startDate as string) : undefined,
+      endDate: query.endDate ? parseLocalDate(query.endDate as string) : undefined
     }
   }
 
@@ -225,6 +234,29 @@ export class MealPlanController {
       const result = await MealPlanService.addMeal(data, user!.userId, user!.role, limits)
       
       return MealPlanController.sendSuccessResponse(res, result, 201)
+    } catch (error) {
+      return MealPlanController.handleError(res, error)
+    }
+  }
+
+  // Atualizar refeição existente
+  static async updateMeal(req: AuthRequest, res: Response) {
+    try {
+      const { isValid, user } = MealPlanController.validateAuth(req)
+      if (!isValid) {
+        return res.status(401).json({
+          success: false,
+          error: ERROR_MESSAGES.UNAUTHORIZED
+        })
+      }
+
+      const { id } = req.params
+      const data: UpdateMealData = req.body
+      const limits: NutritionalLimits | undefined = req.body.limits
+
+      const result = await MealPlanService.updateMeal(id, data, user!.userId, user!.role, limits)
+      
+      return MealPlanController.sendSuccessResponse(res, result)
     } catch (error) {
       return MealPlanController.handleError(res, error)
     }

@@ -295,7 +295,12 @@ export class FoodService {
     const foodIds = popularFoods.map(item => item.foodId)
 
     if (foodIds.length === 0) {
-      return []
+      return await prisma.food.findMany({
+        take: limit,
+        orderBy: {
+          name: 'asc'
+        }
+      })
     }
 
     return await prisma.food.findMany({

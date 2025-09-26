@@ -143,6 +143,41 @@ async function main() {
     }
   })
 
+  // Buscar os IDs dos usuários criados
+  const nutritionist1 = await prisma.user.findUnique({ 
+    where: { email: 'dra.silva@email.com' },
+    include: { nutritionistProfile: true }
+  })
+  const client1 = await prisma.user.findUnique({ where: { email: 'joao@email.com' } })
+  const client2 = await prisma.user.findUnique({ where: { email: 'maria@email.com' } })
+
+  // Criar contratos entre nutricionista e clientes
+  if (nutritionist1 && client1) {
+    await prisma.contract.create({
+      data: {
+        clientId: client1.id,
+        nutritionistId: nutritionist1.nutritionistProfile!.id,
+        status: 'ACTIVE',
+        monthlyPrice: 200.0,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 dias
+      }
+    })
+  }
+
+  if (nutritionist1 && client2) {
+    await prisma.contract.create({
+      data: {
+        clientId: client2.id,
+        nutritionistId: nutritionist1.nutritionistProfile!.id,
+        status: 'ACTIVE',
+        monthlyPrice: 200.0,
+        startDate: new Date(),
+        endDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 dias
+      }
+    })
+  }
+
   // Criar alguns alimentos básicos
   await prisma.food.createMany({
     data: [

@@ -25,6 +25,9 @@ router.delete('/:id', MealPlanController.delete)
 // POST /api/meal-plans/meals - Adicionar refeição ao plano
 router.post('/meals', MealPlanController.addMeal)
 
+// PUT /api/meal-plans/meals/:id - Atualizar refeição existente
+router.put('/meals/:id', MealPlanController.updateMeal)
+
 // POST /api/meal-plans/copy - Copiar plano alimentar
 router.post('/copy', MealPlanController.copyPlan)
 

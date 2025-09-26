@@ -1,9 +1,11 @@
 import { BaseService, PaginationResult } from './base.service'
 
 // Types para Meal Plans
+export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK'
+
 export interface MealPlan {
   id: string
-  name: string
+  title: string
   description?: string
   startDate: string
   endDate: string
@@ -13,7 +15,7 @@ export interface MealPlan {
   totalCarbs?: number
   totalFats?: number
   totalFiber?: number
-  contractId?: string
+  contractId: string
   clientId?: string
   createdAt: string
   updatedAt: string
@@ -23,8 +25,9 @@ export interface MealPlan {
 export interface Meal {
   id: string
   name: string
-  type: 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK'
+  type: MealType
   time?: string
+  suggestedTime?: string // Campo do backend
   calories: number
   proteins: number
   carbs: number
@@ -57,16 +60,15 @@ export interface MealFood {
 }
 
 export interface CreateMealPlanData {
-  name: string
+  title: string
   description?: string
   startDate: string
   endDate: string
-  contractId?: string
-  clientId?: string
+  contractId: string
 }
 
 export interface UpdateMealPlanData {
-  name?: string
+  title?: string
   description?: string
   startDate?: string
   endDate?: string
@@ -75,9 +77,20 @@ export interface UpdateMealPlanData {
 
 export interface CreateMealData {
   name: string
-  type: 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK'
-  time?: string
+  type: MealType
+  suggestedTime?: string
   mealPlanId: string
+  foods?: Array<{
+    foodId: string
+    quantity: number
+    unit: string
+  }>
+}
+
+export interface UpdateMealData {
+  name?: string
+  type?: MealType
+  suggestedTime?: string
   foods?: Array<{
     foodId: string
     quantity: number
@@ -167,6 +180,12 @@ export class MealPlanService extends BaseService {
   static async addMeal(data: CreateMealData, limits?: NutritionalLimits): Promise<Meal> {
     const payload = limits ? { ...data, limits } : data
     return this.post<Meal>('/meal-plans/meals', payload, 'Erro ao adicionar refeição')
+  }
+
+  // Atualizar refeição existente
+  static async updateMeal(mealId: string, data: UpdateMealData, limits?: NutritionalLimits): Promise<Meal> {
+    const payload = limits ? { ...data, limits } : data
+    return this.put<Meal>(`/meal-plans/meals/${mealId}`, payload, 'Erro ao atualizar refeição')
   }
 
   // Copiar plano existente

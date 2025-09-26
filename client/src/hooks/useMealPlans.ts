@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { MealPlanService } from '@/services/meal-plan.service'
 import type {
   MealPlan,
@@ -65,6 +65,10 @@ export interface UseMealPlansReturn {
 export function useMealPlans(options: UseMealPlansOptions = {}): UseMealPlansReturn {
   const { initialFilters = {}, autoFetch = true } = options
   const { user } = useAuth()
+
+  // ESTABILIZAR initialFilters para evitar re-renders infinitos usando useRef
+  const initialFiltersRef = useRef(initialFilters)
+  const stableInitialFilters = initialFiltersRef.current
 
   // Estados principais
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([])
@@ -136,7 +140,7 @@ export function useMealPlans(options: UseMealPlansOptions = {}): UseMealPlansRet
       setPagination(result.pagination)
       return result
     })
-  }, [executeFetch, user])
+  }, [executeFetch, user?.role, user?.nutritionistProfile?.id])
 
   // Buscar plano específico por ID
   const fetchPlanById = useCallback(async (id: string): Promise<void> => {
@@ -230,15 +234,45 @@ export function useMealPlans(options: UseMealPlansOptions = {}): UseMealPlansRet
 
   // Refresh (refetch com filtros atuais)
   const refreshPlans = useCallback(async () => {
-    await fetchPlans(initialFilters)
-  }, [fetchPlans, initialFilters])
+    const enhancedFilters = user?.role === 'NUTRITIONIST' && user.nutritionistProfile?.id 
+      ? { ...stableInitialFilters, nutritionistId: user.nutritionistProfile.id }
+      : stableInitialFilters
+      
+    await executeFetch(async () => {
+      const result: PaginationResult<MealPlan> = await MealPlanService.getAll(enhancedFilters)
+      setMealPlans(result.data)
+      setPagination(result.pagination)
+      return result
+    })
+  }, [stableInitialFilters, user?.role, user?.nutritionistProfile?.id, executeFetch])
 
-  // Auto-fetch inicial
+  // Auto-fetch inicial - ESTÁVEL (sem dependências problemáticas)
   useEffect(() => {
-    if (autoFetch) {
-      fetchPlans(initialFilters)
+    if (!autoFetch || !user?.role) return
+    
+    const nutritionistId = user?.role === 'NUTRITIONIST' ? user.nutritionistProfile?.id : undefined
+    
+    const initialFetch = async () => {
+      try {
+        const enhancedFilters = nutritionistId 
+          ? { ...stableInitialFilters, nutritionistId }
+          : stableInitialFilters
+          
+        const result: PaginationResult<MealPlan> = await MealPlanService.getAll(enhancedFilters)
+        setMealPlans(result.data)
+        setPagination(result.pagination)
+      } catch (error) {
+        console.error('Erro ao buscar planos iniciais:', error)
+      }
     }
-  }, [autoFetch, fetchPlans, initialFilters])
+    
+    initialFetch()
+  }, [
+    autoFetch, 
+    user?.role, 
+    user?.nutritionistProfile?.id,
+    stableInitialFilters
+  ])
 
   return {
     // Estado dos dados

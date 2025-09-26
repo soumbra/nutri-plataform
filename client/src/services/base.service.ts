@@ -197,10 +197,10 @@ export abstract class BaseService {
   /**
    * Tratamento centralizado de erros
    */
-  private static handleError(error: unknown, defaultMessage: string): Error {
+  private static handleError(error: unknown, defaultMessage: string): never {
     if (isApiError(error) && error.response?.data?.error) {
-      return new Error(error.response.data.error)
+      throw new Error(error.response.data.error)
     }
-    return new Error(defaultMessage)
+    throw new Error(defaultMessage)
   }
 }

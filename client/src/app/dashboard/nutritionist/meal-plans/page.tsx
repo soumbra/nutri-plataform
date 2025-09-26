@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { Plus, Search, Calendar, Users, TrendingUp } from 'lucide-react'
+import { Plus, Search, Calendar, Users, TrendingUp, ChevronLeft } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -81,11 +81,19 @@ export default function MealPlansPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Planos Alimentares</h1>
-          <p className="text-muted-foreground">
-            Gerencie seus planos alimentares e acompanhe o progresso dos clientes
-          </p>
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Voltar
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Planos Alimentares</h1>
+            <p className="text-muted-foreground">
+              Gerencie seus planos alimentares e acompanhe o progresso dos clientes
+            </p>
+          </div>
         </div>
         <Link href="/dashboard/nutritionist/meal-plans/new">
           <Button className="w-full sm:w-auto">
@@ -266,7 +274,7 @@ function MealPlanCard({
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <CardTitle className="text-lg line-clamp-1">{plan.name}</CardTitle>
+            <CardTitle className="text-lg line-clamp-1">{plan.title}</CardTitle>
             <CardDescription className="mt-1">
               {plan.description || 'Sem descrição'}
             </CardDescription>

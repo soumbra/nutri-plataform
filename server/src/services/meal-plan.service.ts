@@ -22,6 +22,17 @@ export interface CreateMealData {
   }[]
 }
 
+export interface UpdateMealData {
+  name?: string
+  type?: MealType
+  description?: string
+  suggestedTime?: string
+  foods?: {
+    foodId: string
+    quantity: number // gramas
+  }[]
+}
+
 export interface MealPlanFilters {
   isActive?: boolean
   contractId?: string
@@ -71,7 +82,11 @@ export class MealPlanService {
     }
 
     const now = new Date()
-    if (startDate < now) {
+    now.setHours(0, 0, 0, 0) // Reset time to start of day
+    const startDateOnly = new Date(startDate)
+    startDateOnly.setHours(0, 0, 0, 0) // Reset time to start of day
+    
+    if (startDateOnly < now) {
       throw new Error('Data de início não pode ser no passado')
     }
 
@@ -255,8 +270,31 @@ export class MealPlanService {
       prisma.mealPlan.count({ where: whereClause })
     ])
 
+    // Calcular informações nutricionais para cada plano
+    const mealPlansWithNutrition = mealPlans.map(plan => {
+      let totalCalories = 0
+      let totalProteins = 0
+      let totalCarbs = 0
+      let totalFats = 0
+
+      plan.meals.forEach(meal => {
+        if (meal.calories) totalCalories += meal.calories
+        if (meal.proteins) totalProteins += meal.proteins
+        if (meal.carbs) totalCarbs += meal.carbs
+        if (meal.fats) totalFats += meal.fats
+      })
+
+      return {
+        ...plan,
+        totalCalories: Math.round(totalCalories * 100) / 100,
+        totalProteins: Math.round(totalProteins * 100) / 100,
+        totalCarbs: Math.round(totalCarbs * 100) / 100,
+        totalFats: Math.round(totalFats * 100) / 100
+      }
+    })
+
     return {
-      data: mealPlans,
+      data: mealPlansWithNutrition,
       pagination: {
         total,
         pages: Math.ceil(total / (pagination.take || 20)),
@@ -474,6 +512,89 @@ export class MealPlanService {
 
       return await tx.meal.findUnique({
         where: { id: meal.id },
+        include: {
+          foods: {
+            include: {
+              food: true
+            }
+          }
+        }
+      })
+    })
+  }
+
+  // Atualizar refeição existente
+  static async updateMeal(mealId: string, data: UpdateMealData, userId: string, role: string, limits?: NutritionalLimits) {
+    if (role !== 'NUTRITIONIST') {
+      throw new Error('Apenas nutricionistas podem atualizar refeições')
+    }
+
+    const nutritionistProfile = await this.getNutritionistProfile(userId)
+
+    // Verificar se a refeição existe e pertence ao nutricionista
+    const existingMeal = await prisma.meal.findFirst({
+      where: {
+        id: mealId,
+        mealPlan: {
+          nutritionistId: nutritionistProfile.id
+        }
+      },
+      include: {
+        mealPlan: true,
+        foods: true
+      }
+    })
+
+    if (!existingMeal) {
+      throw new Error('Refeição não encontrada')
+    }
+
+    return await prisma.$transaction(async (tx) => {
+      // Atualizar dados básicos da refeição
+      const updateData: Prisma.MealUpdateInput = {}
+      if (data.name !== undefined) updateData.name = data.name
+      if (data.type !== undefined) updateData.type = data.type
+      if (data.description !== undefined) updateData.description = data.description
+      if (data.suggestedTime !== undefined) updateData.suggestedTime = data.suggestedTime
+
+      await tx.meal.update({
+        where: { id: mealId },
+        data: updateData
+      })
+
+      // Se alimentos foram fornecidos, atualizar completamente
+      if (data.foods !== undefined) {
+        // Remover todos os alimentos existentes
+        await tx.mealFood.deleteMany({
+          where: { mealId }
+        })
+
+        // Adicionar novos alimentos
+        if (data.foods.length > 0) {
+          await tx.mealFood.createMany({
+            data: data.foods.map(food => ({
+              mealId,
+              foodId: food.foodId,
+              quantity: food.quantity
+            }))
+          })
+
+          // Calcular informações nutricionais
+          const nutritionalInfo = await this.calculateMealNutrition(mealId, tx)
+          
+          // Validar limites se fornecidos
+          if (limits && nutritionalInfo) {
+            this.validateNutritionalLimits(
+              nutritionalInfo.calories,
+              nutritionalInfo.proteins,
+              limits
+            )
+          }
+        }
+      }
+
+      return await tx.meal.findUnique({
+        where: { id: mealId },
         include: {
           foods: {
             include: {

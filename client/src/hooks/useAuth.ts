@@ -24,15 +24,11 @@ export function useRequireRole(requiredRole: User['role']) {
     if (user?.role !== requiredRole) {
       // Redireciona para dashboard apropriado baseado no role
       switch (user?.role) {
-        case 'CLIENT':
-          router.push('/dashboard/client')
-          break
         case 'NUTRITIONIST':
           router.push('/dashboard/nutritionist')
           break
+        case 'CLIENT':
         case 'ADMIN':
-          router.push('/dashboard/admin')
-          break
         default:
           router.push('/dashboard')
       }
