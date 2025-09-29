@@ -71,11 +71,25 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle>Meus Planos Alimentares</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Visualize seus planos nutricionais criados pelo seu nutricionista
+              </p>
+              <Link href="/dashboard/client/meal-plans">
+                <Button>Ver Meus Planos</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Meu Progresso</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Acompanhe sua evolução e planos alimentares
+                Acompanhe sua evolução e desenvolvimento
               </p>
             </CardContent>
           </Card>
@@ -90,7 +104,9 @@ export default function DashboardPage() {
               <p className="text-muted-foreground mb-4">
                 Gerencie seus clientes e acompanhamentos
               </p>
-              <Button>Ver Clientes</Button>
+              <Link href="/dashboard/nutritionist/clients">
+                <Button>Ver Clientes</Button>
+              </Link>
             </CardContent>
           </Card>
 
@@ -99,9 +115,12 @@ export default function DashboardPage() {
               <CardTitle>Planos Alimentares</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
+              <p className="text-muted-foreground mb-4">
                 Crie e edite planos personalizados
               </p>
+              <Link href="/dashboard/nutritionist/meal-plans">
+                <Button>Gerenciar Planos</Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

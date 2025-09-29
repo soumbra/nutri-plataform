@@ -28,4 +28,5 @@ export interface NutritionistFilters {
   maxPrice?: number
   experience?: number
   search?: string
+  [key: string]: unknown
 }

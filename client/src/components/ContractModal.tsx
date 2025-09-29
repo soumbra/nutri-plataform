@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { DollarSign, Clock } from 'lucide-react'
 import { Nutritionist } from '@/types/nutritionist'
-import { ContractService } from '@/lib/contract.service'
+import { ContractService } from '@/services/contract.service'
 import { useRouter } from 'next/navigation'
 
 interface ContractModalProps {

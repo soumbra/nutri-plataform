@@ -1,12 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Calendar, User, DollarSign, Clock, Trash2 } from 'lucide-react'
+import { Calendar, Clock, DollarSign, User, Trash2 } from 'lucide-react'
 import { Contract } from '@/types/contract'
+import { ContractService } from '@/services/contract.service'
 import { useContracts } from '@/hooks/useContracts'
-import { ContractService } from '@/lib/contract.service'
 import Link from 'next/link'
 
 const statusMap = {
@@ -112,6 +112,11 @@ function ContractCard({ contract, onDelete }: { readonly contract: Contract, rea
 export default function ClientContracts() {
   const { contracts, loading, error, refetch } = useContracts()
 
+  // Memoizar o callback para evitar re-renders desnecessários
+  const handleDelete = useCallback(() => {
+    refetch()
+  }, [refetch])
+
   if (loading) {
     return (
       <Card>
@@ -182,7 +187,7 @@ export default function ClientContracts() {
               <h4 className="font-medium text-green-600 text-sm">Contratos Ativos</h4>
               <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {activeContracts.map(contract => (
-                  <ContractCard key={contract.id} contract={contract} onDelete={refetch} />
+                  <ContractCard key={contract.id} contract={contract} onDelete={handleDelete} />
                 ))}
               </div>
             </div>
@@ -193,7 +198,7 @@ export default function ClientContracts() {
               <h4 className="font-medium text-muted-foreground text-sm">Histórico</h4>
               <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {otherContracts.map(contract => (
-                  <ContractCard key={contract.id} contract={contract} onDelete={refetch} />
+                  <ContractCard key={contract.id} contract={contract} onDelete={handleDelete} />
                 ))}
               </div>
             </div>

@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Nutritionist } from '@/types/nutritionist'
-import { NutritionistService } from '@/lib/nutritionist.service'
+import { NutritionistService } from '@/services/nutritionist.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'

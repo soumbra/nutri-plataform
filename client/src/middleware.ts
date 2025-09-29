@@ -1,29 +1,110 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { jwtDecode } from 'jwt-decode'
+
+interface DecodedToken {
+  userId: string
+  email: string
+  role: 'CLIENT' | 'NUTRITIONIST' | 'ADMIN'
+  exp: number
+}
+
+// Helper para validar token e extrair role
+function validateToken(token: string): { isValid: boolean; role?: string } {
+  try {
+    const decoded = jwtDecode<DecodedToken>(token)
+    
+    // Verificar se token expirou
+    if (decoded.exp * 1000 < Date.now()) {
+      return { isValid: false }
+    }
+
+    return { isValid: true, role: decoded.role }
+  } catch {
+    return { isValid: false }
+  }
+}
+
+// Helper para determinar tipo de rota
+function getRouteType(pathname: string): 'auth' | 'nutritionist' | 'client' | 'admin' | 'protected' | 'public' {
+  if (['/login', '/register'].some(route => pathname.startsWith(route))) {
+    return 'auth'
+  }
+  
+  if (pathname.startsWith('/dashboard/nutritionist')) {
+    return 'nutritionist'
+  }
+  
+  if (pathname.startsWith('/dashboard/client')) {
+    return 'client'
+  }
+  
+  if (pathname.startsWith('/dashboard/admin')) {
+    return 'admin'
+  }
+  
+  if (pathname.startsWith('/dashboard')) {
+    return 'protected'
+  }
+  
+  return 'public'
+}
+
+// Helper para determinar redirecionamento por role
+function getRedirectByRole(role: string): string {
+  switch (role) {
+    case 'NUTRITIONIST':
+      return '/dashboard/nutritionist'
+    case 'CLIENT':
+    case 'ADMIN':
+    default:
+      return '/dashboard'
+  }
+}
 
 export function middleware(request: NextRequest) {
-  const token = request.cookies.get('token') || 
-                request.headers.get('authorization')
+  const token = request.cookies.get('token')?.value || 
+                request.headers.get('authorization')?.replace('Bearer ', '')
   
-  // Rotas que requerem autenticação
-  const protectedRoutes = ['/dashboard']
-  const authRoutes = ['/login', '/register']
+  const routeType = getRouteType(request.nextUrl.pathname)
   
-  const isProtectedRoute = protectedRoutes.some(route => 
-    request.nextUrl.pathname.startsWith(route)
-  )
+  // Rota pública - permite acesso
+  if (routeType === 'public') {
+    return NextResponse.next()
+  }
   
-  const isAuthRoute = authRoutes.some(route =>
-    request.nextUrl.pathname.startsWith(route)
-  )
-
-  // Se não tem token e tenta acessar rota protegida
-  if (isProtectedRoute && !token) {
+  // Rota de auth com token - redireciona para dashboard
+  if (routeType === 'auth' && token) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+  
+  // Rota protegida sem token - redireciona para login
+  if (routeType !== 'auth' && !token) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
-
-  // Se tem token e tenta acessar login/register
-  if (isAuthRoute && token) {
+  
+  // Se não tem token, continua (já tratado acima)
+  if (!token) {
+    return NextResponse.next()
+  }
+  
+  // Validar token e verificar permissões
+  const { isValid, role } = validateToken(token)
+  
+  if (!isValid) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+  
+  // Verificar permissões por role
+  if (routeType === 'nutritionist' && role !== 'NUTRITIONIST') {
+    return NextResponse.redirect(new URL(getRedirectByRole(role || 'CLIENT'), request.url))
+  }
+  
+  if (routeType === 'client' && role !== 'CLIENT') {
+    return NextResponse.redirect(new URL(getRedirectByRole(role || 'NUTRITIONIST'), request.url))
+  }
+  
+  if (routeType === 'admin' && role !== 'ADMIN') {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

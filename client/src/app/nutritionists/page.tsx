@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
 import { Nutritionist, NutritionistFilters } from '@/types/nutritionist'
-import { NutritionistService } from '@/lib/nutritionist.service'
+import { NutritionistService } from '@/services/nutritionist.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
