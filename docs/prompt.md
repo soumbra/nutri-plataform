@@ -86,11 +86,14 @@ nutri-platform/
 - APIs para meal plans e foods
 - Interface para criar/visualizar planos
 - Sistema de refeições detalhado
+- Possibilidade de usuario ver seu plano
+- Nutricionista ver seus clientes que tem plano ativo
 
 ### Dia 5: Chat e Progresso
 - Sistema de mensagens básico
 - Upload de fotos de progresso
 - Acompanhamento de evolução
+
 
 ### Dia 6-7: Refinamentos e Deploy
 - Testes, correções, melhorias de UX

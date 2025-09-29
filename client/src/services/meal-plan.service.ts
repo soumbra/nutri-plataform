@@ -20,6 +20,30 @@ export interface MealPlan {
   createdAt: string
   updatedAt: string
   meals?: Meal[]
+  contract?: {
+    id: string
+    client: {
+      id: string
+      name: string
+      email: string
+      phone?: string
+    }
+    nutritionist: {
+      id: string
+      crn: string
+      specialty?: string
+      experience?: number
+      bio?: string
+      pricePerHour?: number
+      isActive: boolean
+      user: {
+        id: string
+        name: string
+        email: string
+        phone?: string
+      }
+    }
+  }
 }
 
 export interface Meal {

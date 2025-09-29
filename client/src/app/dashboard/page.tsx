@@ -71,11 +71,25 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader>
+              <CardTitle>Meus Planos Alimentares</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Visualize seus planos nutricionais criados pelo seu nutricionista
+              </p>
+              <Link href="/dashboard/client/meal-plans">
+                <Button>Ver Meus Planos</Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle>Meu Progresso</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-muted-foreground">
-                Acompanhe sua evolução e planos alimentares
+                Acompanhe sua evolução e desenvolvimento
               </p>
             </CardContent>
           </Card>

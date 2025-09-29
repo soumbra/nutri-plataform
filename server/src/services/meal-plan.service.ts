@@ -353,7 +353,26 @@ export class MealPlanService {
       throw new Error('Plano alimentar não encontrado')
     }
 
-    return mealPlan
+    // Calcular informações nutricionais do plano
+    let totalCalories = 0
+    let totalProteins = 0
+    let totalCarbs = 0
+    let totalFats = 0
+    
+    mealPlan.meals.forEach(meal => {
+      if (meal.calories) totalCalories += meal.calories
+      if (meal.proteins) totalProteins += meal.proteins
+      if (meal.carbs) totalCarbs += meal.carbs
+      if (meal.fats) totalFats += meal.fats
+    })
+
+    return {
+      ...mealPlan,
+      totalCalories: Math.round(totalCalories * 100) / 100,
+      totalProteins: Math.round(totalProteins * 100) / 100,
+      totalCarbs: Math.round(totalCarbs * 100) / 100,
+      totalFats: Math.round(totalFats * 100) / 100
+    }
   }
 
   // Atualizar meal plan
