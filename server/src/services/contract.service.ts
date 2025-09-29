@@ -130,6 +130,19 @@ export class ContractService {
               }
             }
           }
+        },
+        mealPlans: {
+          select: {
+            id: true,
+            title: true,
+            isActive: true,
+            createdAt: true,
+            updatedAt: true
+          },
+          orderBy: {
+            createdAt: 'desc'
+          },
+          take: 5 // Limitar para não sobrecarregar
         }
       },
       orderBy: {

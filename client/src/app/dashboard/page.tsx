@@ -104,7 +104,9 @@ export default function DashboardPage() {
               <p className="text-muted-foreground mb-4">
                 Gerencie seus clientes e acompanhamentos
               </p>
-              <Button>Ver Clientes</Button>
+              <Link href="/dashboard/nutritionist/clients">
+                <Button>Ver Clientes</Button>
+              </Link>
             </CardContent>
           </Card>
 

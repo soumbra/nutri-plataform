@@ -54,7 +54,8 @@ export interface UpdateContractStatusData {
 // Para evitar dependência circular, definindo interface simplificada
 interface MealPlan {
   id: string
-  name: string
-  description?: string
+  title: string
+  isActive: boolean
   createdAt: string
+  updatedAt: string
 }
