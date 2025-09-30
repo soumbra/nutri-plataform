@@ -1,33 +1,16 @@
-services:services:
-
-  - type: web  - type: web
-
-    name: nutri-platform-api    name: nutri-platform-api
-
-    env: node    env: node
-
-    rootDir: server    rootDir: server
-
-    buildCommand: npm install && npm run build    buildCommand: npm ci && npm run build
-
-    startCommand: npm start    startCommand: npm start
-
-    healthCheckPath: /api/health    healthCheckPath: /api/health
-
-    envVars:    envVars:
-
-      - key: NODE_ENV      - key: NODE_ENV
-
-        value: production        value: production
-
-      - key: PORT  
-
-        value: 3001  - type: pserv
-
-      name: nutri-platform-db
-
-  - type: pserv    databaseName: nutri_platform
-
-    name: nutri-platform-db    user: nutri_user
+services:
+  - type: web
+    name: nutri-platform-api
+    env: node
+    rootDir: server
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+  
+  - type: pserv
+    name: nutri-platform-db
     databaseName: nutri_platform
-    plan: starter
+    user: nutri_user
