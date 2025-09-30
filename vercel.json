@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "buildCommand": "cd client && npm ci && npm run build",
+  "devCommand": "cd client && npm run dev",
+  "installCommand": "cd client && npm ci",
+  "framework": "nextjs",
+  "outputDirectory": "client/.next",
+  "functions": {
+    "client/src/app/**/*.{js,ts,jsx,tsx}": {
+      "maxDuration": 30
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://your-backend.railway.app/api/:path*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}

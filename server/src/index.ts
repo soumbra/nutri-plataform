@@ -17,12 +17,26 @@ dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
+const NODE_ENV = process.env.NODE_ENV || 'development'
+
+// CORS configuration for production
+const corsOptions = {
+  origin: NODE_ENV === 'production' 
+    ? [
+        'https://your-app-name.vercel.app', // Substituir pela URL real do Vercel
+        'https://*.vercel.app'
+      ] 
+    : ['http://localhost:3000'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}
 
 // Middlewares
 app.use(helmet())
-app.use(cors())
-app.use(morgan('combined'))
-app.use(express.json())
+app.use(cors(corsOptions))
+app.use(morgan(NODE_ENV === 'production' ? 'combined' : 'dev'))
+app.use(express.json({ limit: '10mb' }))
+app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
 // Rotas
 app.get('/api/health', (req, res) => {
