@@ -1,7 +1,7 @@
 'use client';
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useProgress } from '@/hooks/useProgress';
 import ProgressChart from '@/components/progress/ProgressChart';
@@ -14,7 +14,7 @@ import Link from 'next/link';
 
 import type { CreateProgressRequest } from '@/types/progress';
 
-export default function ProgressPage() {
+function ClientProgressContent() {
   const [showForm, setShowForm] = useState(false);
   const { 
     records, 
@@ -216,4 +216,16 @@ export default function ProgressPage() {
       </div>
     </div>
   );
+}
+
+export default function ClientProgressPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <ClientProgressContent />
+    </Suspense>
+  )
 }

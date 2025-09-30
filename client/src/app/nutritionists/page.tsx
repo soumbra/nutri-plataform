@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { Nutritionist, NutritionistFilters } from '@/types/nutritionist'
 import { NutritionistService } from '@/services/nutritionist.service'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 
-export default function NutritionistsPage() {
+function NutritionistsContent() {
   const [nutritionists, setNutritionists] = useState<Nutritionist[]>([])
   const [loading, setLoading] = useState(true)
   const [appliedFilters, setAppliedFilters] = useState<NutritionistFilters>({})
@@ -170,5 +170,17 @@ export default function NutritionistsPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function NutritionistsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <NutritionistsContent />
+    </Suspense>
   )
 }

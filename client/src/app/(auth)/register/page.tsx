@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,9 +26,9 @@ const registerSchema = z.object({
   path: ['confirmPassword']
 })
 
-type RegisterForm = z.infer<typeof registerSchema>
+type RegisterFormData = z.infer<typeof registerSchema>
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
@@ -50,7 +50,7 @@ export default function RegisterPage() {
     watch,
     setValue,
     formState: { errors }
-  } = useForm<RegisterForm>({
+  } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
       role: defaultRole
@@ -59,7 +59,7 @@ export default function RegisterPage() {
 
   const selectedRole = watch('role')
 
-  const onSubmit = async (data: RegisterForm) => {
+  const onSubmit = async (data: RegisterFormData) => {
     try {
       setIsLoading(true)
       setError('')
@@ -209,5 +209,17 @@ export default function RegisterPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <RegisterForm />
+    </Suspense>
   )
 }

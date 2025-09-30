@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Nutritionist } from '@/types/nutritionist'
 import { NutritionistService } from '@/services/nutritionist.service'
@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, Phone, Mail, Star } from 'lucide-react'
 import ContractModal from '@/components/ContractModal'
 
-export default function NutritionistProfilePage() {
+function NutritionistProfileContent() {
   const [nutritionist, setNutritionist] = useState<Nutritionist | null>(null)
   const [loading, setLoading] = useState(true)
   const [contractModalOpen, setContractModalOpen] = useState(false)
@@ -210,5 +210,17 @@ export default function NutritionistProfilePage() {
         />
       )}
     </div>
+  )
+}
+
+export default function NutritionistProfilePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <NutritionistProfileContent />
+    </Suspense>
   )
 }

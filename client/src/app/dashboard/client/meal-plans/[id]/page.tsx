@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import { ChevronLeft, Calendar, Clock, User, Utensils } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,7 +17,7 @@ interface MealPlanDetailPageProps {
   }>
 }
 
-export default function MealPlanDetailPage({ params }: MealPlanDetailPageProps) {
+function MealPlanDetailContent({ params }: MealPlanDetailPageProps) {
   const router = useRouter()
   const [resolvedParams, setResolvedParams] = useState<{ id: string } | null>(null)
 
@@ -377,5 +377,17 @@ function MealPlanDetailView({ plan }: { readonly plan: MealPlan }) {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function MealPlanDetailPage({ params }: MealPlanDetailPageProps) {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <MealPlanDetailContent params={params} />
+    </Suspense>
   )
 }

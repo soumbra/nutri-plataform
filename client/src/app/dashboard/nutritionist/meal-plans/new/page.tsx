@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Plus, Trash2, Search, Loader2 } from 'lucide-react'
@@ -47,7 +47,7 @@ const MEAL_TYPES = [
   { value: 'SNACK', label: 'Lanche' }
 ] as const
 
-export default function NewMealPlanPage() {
+function NewMealPlanContent() {
   const router = useRouter()
   const toast = useToast()
   const { createPlan, creating: loading } = useMealPlans({
@@ -770,5 +770,17 @@ export default function NewMealPlanPage() {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function NewMealPlanPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <NewMealPlanContent />
+    </Suspense>
   )
 }

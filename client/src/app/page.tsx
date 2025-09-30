@@ -1,12 +1,13 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
+import { Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import Link from 'next/link'
 
-export default function HomePage() {
+function HomePageContent() {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -76,5 +77,17 @@ export default function HomePage() {
         </Card>
       </div>
     </main>
+  )
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <HomePageContent />
+    </Suspense>
   )
 }

@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 import { Plus, Search, Users, TrendingUp, Eye, Calendar, Clock, User, ChefHat, ChevronLeft } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -20,7 +20,7 @@ const statusMap = {
   COMPLETED: { label: 'Concluído', variant: 'outline' as const, color: 'bg-gray-500' }
 }
 
-export default function ClientsPage() {
+function ClientsContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedStatus, setSelectedStatus] = useState('all')
   
@@ -285,5 +285,17 @@ function ClientCard({ contract }: { readonly contract: Contract }) {
         </div>
       </CardContent>
     </Card>
+  )
+}
+
+export default function ClientsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <ClientsContent />
+    </Suspense>
   )
 }

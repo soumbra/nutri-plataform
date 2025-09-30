@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, Suspense } from 'react'
 import { Calendar, Clock, User, ChevronLeft, Filter } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -10,7 +10,7 @@ import { useMealPlans } from '@/hooks/useMealPlans'
 import type { MealPlanFilters, MealPlan } from '@/services/meal-plan.service'
 import Link from 'next/link'
 
-export default function ClientMealPlansPage() {
+function ClientMealPlansContent() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
   
   // Filtros para o hook
@@ -267,5 +267,17 @@ function MealPlanCard({ plan }: { readonly plan: MealPlan }) {
         </Link>
       </CardContent>
     </Card>
+  )
+}
+
+export default function ClientMealPlansPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <ClientMealPlansContent />
+    </Suspense>
   )
 }

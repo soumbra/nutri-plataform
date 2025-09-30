@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import ClientContracts from '@/components/ClientContracts'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const { user, logout, loading } = useAuth()
   const router = useRouter()
 
@@ -131,5 +131,17 @@ export default function DashboardPage() {
         </div>
       )}
     </div>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }

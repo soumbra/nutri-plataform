@@ -1,7 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic';
 
-import { use, useState, useCallback, useEffect } from 'react'
+import { use, useState, useCallback, useEffect, Suspense } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft, Plus, Trash2, Search, Loader2 } from 'lucide-react'
@@ -50,7 +50,7 @@ interface EditMealPlanPageProps {
   }>
 }
 
-export default function EditMealPlanPage({ params }: EditMealPlanPageProps) {
+function EditMealPlanContent({ params }: EditMealPlanPageProps) {
   const resolvedParams = use(params)
   const router = useRouter()
   const toast = useToast()
@@ -857,5 +857,17 @@ export default function EditMealPlanPage({ params }: EditMealPlanPageProps) {
         </form>
       </div>
     </div>
+  )
+}
+
+export default function EditMealPlanPage({ params }: EditMealPlanPageProps) {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-screen">
+        <div>Carregando...</div>
+      </div>
+    }>
+      <EditMealPlanContent params={params} />
+    </Suspense>
   )
 }
