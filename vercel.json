@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "buildCommand": "cd client && npm ci && npm run build",
-  "devCommand": "cd client && npm run dev",
-  "installCommand": "cd client && npm ci",
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm ci",
   "framework": "nextjs",
-  "outputDirectory": "client/.next",
+  "outputDirectory": ".next",
   "rewrites": [
     {
       "source": "/api/:path*",
