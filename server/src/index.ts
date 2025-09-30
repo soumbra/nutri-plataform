@@ -10,6 +10,7 @@ import nutritionistRoutes from './routes/nutritionist'
 import contractRoutes from './routes/contracts'
 import mealPlanRoutes from './routes/meal-plans'
 import foodRoutes from './routes/foods'
+import progressRoutes from './routes/progress'
 
 
 dotenv.config()
@@ -33,6 +34,7 @@ app.use('/api/nutritionists', nutritionistRoutes)
 app.use('/api/contracts', contractRoutes)
 app.use('/api/meal-plans', mealPlanRoutes)
 app.use('/api/foods', foodRoutes)
+app.use('/api/progress', progressRoutes)
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`)
