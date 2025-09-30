@@ -9,6 +9,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -30,10 +31,11 @@ type RegisterFormData = z.infer<typeof registerSchema>
 
 function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const { register: registerUser } = useAuth()
+  const toast = useToast()
   
   const roleParam = searchParams.get('role') // client ou nutritionist
                      
@@ -62,16 +64,32 @@ function RegisterForm() {
   const onSubmit = async (data: RegisterFormData) => {
     try {
       setIsLoading(true)
-      setError('')
       
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { confirmPassword, ...registerData } = data
       await registerUser(registerData)
       
-      router.push('/dashboard')
+      setIsLoading(false)
+      setIsRedirecting(true)
+      toast.success('Conta criada com sucesso!', 'Bem-vindo à plataforma')
+      
+      // Aguardar um pouco para o usuário ler o toast antes de redirecionar
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao criar conta')
-    } finally {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao criar conta'
+      
+      // Mensagens de erro mais específicas para registro
+      if (errorMessage.includes('409') || errorMessage.includes('já existe')) {
+        toast.error('Email já cadastrado', 'Este email já está sendo usado. Tente fazer login ou use outro email')
+      } else if (errorMessage.includes('400') || errorMessage.includes('inválido')) {
+        toast.error('Dados inválidos', 'Verifique os dados fornecidos e tente novamente')
+      } else if (errorMessage.includes('Network Error') || errorMessage.includes('fetch')) {
+        toast.error('Erro de conexão', 'Verifique sua conexão com a internet')
+      } else {
+        toast.error('Erro ao criar conta', errorMessage)
+      }
       setIsLoading(false)
     }
   }
@@ -88,12 +106,6 @@ function RegisterForm() {
         
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-
             {/* Seletor de Tipo */}
             <div className="space-y-2">
               <Label>Eu sou:</Label>
@@ -182,7 +194,15 @@ function RegisterForm() {
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? 'Criando conta...' : 'Criar conta'}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading || isRedirecting}
+            >
+              {isLoading && 'Criando conta...'}
+              {isRedirecting && 'Redirecionando...'}
+              {!isLoading && !isRedirecting && 'Criar conta'}
+            </Button>
             </Button>
           </form>
 

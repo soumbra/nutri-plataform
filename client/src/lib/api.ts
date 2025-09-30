@@ -22,9 +22,14 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      // Só redirecionar se não estivermos já em uma página de auth
+      if (typeof window !== 'undefined' && 
+          !window.location.pathname.includes('/login') && 
+          !window.location.pathname.includes('/register')) {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(new Error(error.message || 'An error occurred'))
   }

@@ -9,6 +9,7 @@ import { z } from 'zod'
 import Link from 'next/link'
 
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/components/ui/toast'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -23,10 +24,11 @@ type LoginFormData = z.infer<typeof loginSchema>
 
 function LoginForm() {
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState('')
+  const [isRedirecting, setIsRedirecting] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const { login } = useAuth()
+  const toast = useToast()
   
   const role = searchParams.get('role') // client ou nutritionist
 
@@ -41,15 +43,30 @@ function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       setIsLoading(true)
-      setError('')
       
       await login(data)
       
-      // Redirecionar baseado no role
-      router.push('/dashboard')
+      setIsLoading(false)
+      setIsRedirecting(true)
+      toast.success('Login realizado com sucesso!', 'Redirecionando...')
+      
+      // Aguardar um pouco para o usuário ler o toast antes de redirecionar
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 1500)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Erro ao fazer login')
-    } finally {
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao fazer login'
+      
+      // Mensagens de erro mais específicas
+      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+        toast.error('Credenciais inválidas', 'Email ou senha incorretos')
+      } else if (errorMessage.includes('404') || errorMessage.includes('não encontrado')) {
+        toast.error('Usuário não encontrado', 'Verifique se o email está correto ou registre-se primeiro')
+      } else if (errorMessage.includes('Network Error') || errorMessage.includes('fetch')) {
+        toast.error('Erro de conexão', 'Verifique sua conexão com a internet')
+      } else {
+        toast.error('Erro no login', errorMessage)
+      }
       setIsLoading(false)
     }
   }
@@ -75,12 +92,6 @@ function LoginForm() {
         
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded">
-                {error}
-              </div>
-            )}
-            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -110,9 +121,11 @@ function LoginForm() {
             <Button 
               type="submit" 
               className="w-full" 
-              disabled={isLoading}
+              disabled={isLoading || isRedirecting}
             >
-              {isLoading ? 'Entrando...' : 'Entrar'}
+              {isLoading && 'Entrando...'}
+              {isRedirecting && 'Redirecionando...'}
+              {!isLoading && !isRedirecting && 'Entrar'}
             </Button>
           </form>
 

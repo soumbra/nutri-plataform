@@ -72,10 +72,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       setUser(userData)
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Credenciais inválidas'
+      // Melhor extração de mensagens de erro do servidor
+      let message = 'Credenciais inválidas'
+      
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { data?: { error?: string, message?: string }, status?: number } }
+        if (axiosError.response?.data?.error) {
+          message = axiosError.response.data.error
+        } else if (axiosError.response?.data?.message) {
+          message = axiosError.response.data.message
+        } else if (axiosError.response?.status === 401) {
+          message = 'Email ou senha incorretos'
+        } else if (axiosError.response?.status === 404) {
+          message = 'Usuário não encontrado'
+        }
+      } else if (err instanceof Error) {
+        message = err.message
+      }
+      
       throw new Error(message)
     }
   }
@@ -96,11 +110,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
       
       setUser(userData)
     } catch (err: unknown) {
-      // Tipando corretamente
-      const message =
-        err instanceof Error
-          ? err.message
-          : 'Erro ao registrar'
+      // Melhor extração de mensagens de erro do servidor
+      let message = 'Erro ao registrar'
+      
+      if (err && typeof err === 'object' && 'response' in err) {
+        const axiosError = err as { response?: { data?: { error?: string, message?: string }, status?: number } }
+        if (axiosError.response?.data?.error) {
+          message = axiosError.response.data.error
+        } else if (axiosError.response?.data?.message) {
+          message = axiosError.response.data.message
+        } else if (axiosError.response?.status === 409) {
+          message = 'Email já está sendo usado'
+        } else if (axiosError.response?.status === 400) {
+          message = 'Dados inválidos fornecidos'
+        }
+      } else if (err instanceof Error) {
+        message = err.message
+      }
+      
       throw new Error(message)
     }
   }

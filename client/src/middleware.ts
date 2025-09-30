@@ -73,26 +73,35 @@ export function middleware(request: NextRequest) {
     return NextResponse.next()
   }
   
-  // Rota de auth com token - redireciona para dashboard
-  if (routeType === 'auth' && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
-  }
-  
-  // Rota protegida sem token - redireciona para login
-  if (routeType !== 'auth' && !token) {
-    return NextResponse.redirect(new URL('/login', request.url))
-  }
-  
-  // Se não tem token, continua (já tratado acima)
-  if (!token) {
+  // Rota de auth - sempre permite acesso, mas verifica se já está logado
+  if (routeType === 'auth') {
+    // Se tem token válido, redireciona para dashboard
+    if (token) {
+      const { isValid, role } = validateToken(token)
+      if (isValid) {
+        return NextResponse.redirect(new URL(getRedirectByRole(role || 'CLIENT'), request.url))
+      }
+      // Se token inválido, remove e continua para página de auth
+      const response = NextResponse.next()
+      response.cookies.delete('token')
+      return response
+    }
+    // Sem token, continua normalmente para página de auth
     return NextResponse.next()
   }
   
-  // Validar token e verificar permissões
+  // Rota protegida sem token - redireciona para login
+  if (!token) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+  
+  // Validar token e verificar permissões para rotas protegidas
   const { isValid, role } = validateToken(token)
   
   if (!isValid) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    const response = NextResponse.redirect(new URL('/login', request.url))
+    response.cookies.delete('token')
+    return response
   }
   
   // Verificar permissões por role
