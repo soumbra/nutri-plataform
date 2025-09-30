@@ -88,9 +88,12 @@ export default function DashboardPage() {
               <CardTitle>Meu Progresso</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">
-                Acompanhe sua evolução e desenvolvimento
+              <p className="text-muted-foreground mb-4">
+                Acompanhe sua evolução, registre peso e visualize gráficos
               </p>
+              <Link href="/dashboard/client/progress">
+                <Button>Ver Progresso</Button>
+              </Link>
             </CardContent>
           </Card>
         </div>

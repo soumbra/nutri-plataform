@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { ArrowLeft } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 
 export default function NutritionistsPage() {
@@ -16,8 +15,6 @@ export default function NutritionistsPage() {
   const [appliedFilters, setAppliedFilters] = useState<NutritionistFilters>({})
   const [formFilters, setFormFilters] = useState<NutritionistFilters>({})
   const [specialties, setSpecialties] = useState<string[]>([])
-
-  const router = useRouter()
 
   const loadNutritionists = useCallback(async () => {
     try {
@@ -65,53 +62,54 @@ export default function NutritionistsPage() {
 
   return (
     <div className="container mx-auto p-8">
-      <div className="mb-8">
-        <Button 
-          variant="ghost" 
-          onClick={() => router.back()}
-          className="mb-4"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Voltar
-        </Button>
-
-        <h1 className="text-3xl font-bold mb-4">Encontre seu Nutricionista</h1>
-        
-        {/* Filtros */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Input
-            placeholder="Buscar por nome..."
-            value={formFilters.search || ''}
-            onChange={(e) => setFormFilters({...formFilters, search: e.target.value})}
-            onKeyDown={handleKeyDown}
-          />
-          
-          <select 
-            className="border rounded px-3 py-2"
-            value={formFilters.specialty || ''}
-            onChange={(e) => setFormFilters({...formFilters, specialty: e.target.value || undefined})}
-            onKeyDown={handleKeyDown}
-          >
-            <option value="">Todas especialidades</option>
-            {specialties.map(specialty => (
-              <option key={specialty} value={specialty}>
-                {specialty}
-              </option>
-            ))}
-          </select>
-
-          <Input
-            type="number"
-            placeholder="Preço máximo"
-            value={formFilters.maxPrice || ''}
-            onChange={(e) => setFormFilters({...formFilters, maxPrice: Number(e.target.value) || undefined})}
-            onKeyDown={handleKeyDown}
-          />
-
-          <Button onClick={handleSearch}>
-            Buscar
-          </Button>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
+        <div className="flex items-center gap-4">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm">
+              <ChevronLeft className="w-4 h-4 mr-2" />
+              Voltar
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Encontre seu Nutricionista</h1>
+          </div>
         </div>
+      </div>
+
+      {/* Filtros */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <Input
+          placeholder="Buscar por nome..."
+          value={formFilters.search || ''}
+          onChange={(e) => setFormFilters({...formFilters, search: e.target.value})}
+          onKeyDown={handleKeyDown}
+        />
+        
+        <select 
+          className="border rounded px-3 py-2"
+          value={formFilters.specialty || ''}
+          onChange={(e) => setFormFilters({...formFilters, specialty: e.target.value || undefined})}
+          onKeyDown={handleKeyDown}
+        >
+          <option value="">Todas especialidades</option>
+          {specialties.map(specialty => (
+            <option key={specialty} value={specialty}>
+              {specialty}
+            </option>
+          ))}
+        </select>
+
+        <Input
+          type="number"
+          placeholder="Preço máximo"
+          value={formFilters.maxPrice || ''}
+          onChange={(e) => setFormFilters({...formFilters, maxPrice: Number(e.target.value) || undefined})}
+          onKeyDown={handleKeyDown}
+        />
+
+        <Button onClick={handleSearch}>
+          Buscar
+        </Button>
       </div>
 
       {/* Lista de Nutricionistas*/}
