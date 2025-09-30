@@ -1,4 +1,5 @@
 'use client'
+export const dynamic = 'force-dynamic';
 
 import { useState, useMemo } from 'react'
 import { Plus, Search, Users, TrendingUp, Eye, Calendar, Clock, User, ChefHat, ChevronLeft } from 'lucide-react'
