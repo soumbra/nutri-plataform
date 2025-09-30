@@ -5,15 +5,10 @@
   "installCommand": "cd client && npm ci",
   "framework": "nextjs",
   "outputDirectory": "client/.next",
-  "functions": {
-    "client/src/app/**/*.{js,ts,jsx,tsx}": {
-      "maxDuration": 30
-    }
-  },
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://your-backend.railway.app/api/:path*"
+      "destination": "https://nutri-plataform-api.onrender.com/api/:path*"
     }
   ],
   "headers": [
