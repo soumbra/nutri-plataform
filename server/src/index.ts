@@ -23,7 +23,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development'
 const corsOptions = {
   origin: NODE_ENV === 'production' 
     ? [
-        'https://your-app-name.vercel.app', // Substituir pela URL real do Vercel
+        'https://nutri-plataformx.vercel.app',
         'https://*.vercel.app'
       ] 
     : ['http://localhost:3000'],
