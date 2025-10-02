@@ -82,7 +82,7 @@ cp .env.example .env.local
 npm run dev
 ```
 
-🔗 **Deploy**: [nutri-platform.vercel.app](https://nutri-platform.vercel.app)
+🔗 **Deploy**: [nutri-platform.vercel.app](https://nutri-plataformx.vercel.app/)
 
 ## 🤝 Contribuição
 
