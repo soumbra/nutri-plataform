@@ -1,5 +1,9 @@
 # 🥗 Nutri-Platform
 
+<div align="center">
+  <img src="docs/logo.png" alt="Nutri-Platform Logo" width="400"/>
+</div>
+
 Sistema completo de gestão nutricional conectando clientes e nutricionistas através de contratos, planos alimentares personalizados e acompanhamento de progresso.
 
 ## 🎯 Visão Geral
