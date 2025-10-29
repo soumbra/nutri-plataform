@@ -191,18 +191,12 @@ function RegisterForm() {
 
             <Button 
               type="submit" 
-              className="w-full" 
-              disabled={isLoading}
-            >
-            <Button 
-              type="submit" 
-              className="w-full" 
+              className="w-full bg-gradient-orange hover:opacity-90 transition-opacity" 
               disabled={isLoading || isRedirecting}
             >
               {isLoading && 'Criando conta...'}
               {isRedirecting && 'Redirecionando...'}
               {!isLoading && !isRedirecting && 'Criar conta'}
-            </Button>
             </Button>
           </form>
 
