@@ -83,7 +83,7 @@ export function ProgressStatsComponent({ stats, loading = false }: ProgressStats
             <div className="text-center p-3 bg-purple-50 rounded-lg">
               <div className="text-lg mb-1">⚖️</div>
               <div className="text-lg font-bold text-purple-600">
-                {stats.averageWeight.toFixed(1)}kg
+                {stats.averageWeight ? `${stats.averageWeight.toFixed(1)}kg` : '--'}
               </div>
               <div className="text-xs text-gray-600">Peso Médio</div>
             </div>
